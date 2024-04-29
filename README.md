@@ -30,3 +30,10 @@ npm install remix-create-express-app
 ## Configuration
 
 See the individual README files for more instructions.
+
+## Example
+
+There's also an example app showing how to configure the Vite plugin and
+create the Express app.
+
+- [`remix-vite-express`](./example/remix-vite-express)
