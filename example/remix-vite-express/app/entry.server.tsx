@@ -11,6 +11,9 @@ import { createReadableStreamFromReadable } from '@remix-run/node'
 import { RemixServer } from '@remix-run/react'
 import { isbot } from 'isbot'
 import { renderToPipeableStream } from 'react-dom/server'
+import { createExpressApp } from 'remix-create-express-app'
+import morgan from 'morgan'
+import { sayHello } from '#app/hello.server.ts'
 
 const ABORT_DELAY = 5_000
 
@@ -138,3 +141,20 @@ function handleBrowserRequest(
     setTimeout(abort, ABORT_DELAY)
   })
 }
+
+declare module '@remix-run/server-runtime' {
+  export interface AppLoadContext {
+    sayHello: () => string
+  }
+}
+
+export const app = createExpressApp({
+  configure: app => {
+    // customize your express app with additional middleware
+    app.use(morgan('tiny'))
+  },
+  getLoadContext: () => {
+    // return the AppLoadContext
+    return { sayHello }
+  },
+})
