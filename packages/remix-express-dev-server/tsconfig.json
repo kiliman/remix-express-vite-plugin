@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "target": "ES2022",
+    "module": "ES2022",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "noEmit": true
+  },
+  "exclude": ["node_modules"],
+  "include": ["src/**/*.ts"]
+}

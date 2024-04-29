@@ -1,0 +1,37 @@
+{
+  "name": "remix-express-dev-server",
+  "version": "0.2.0",
+  "description": "This package includes a Vite plugin to use in your Remix app. It imports the Express app you create in entry.server.tsx.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "sideEffects": false,
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json --module esnext --outDir ./dist"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@remix-run/dev": "^2.9.1",
+    "esbuild": "^0.20.2",
+    "minimatch": "^9.0.4",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.10"
+  },
+  "peerDependencies": {
+    "@remix-run/dev": "^2.8.1",
+    "esbuild": "^0.20.2",
+    "minimatch": "^9.0.4",
+    "vite": "^5.2.8"
+  }
+}
