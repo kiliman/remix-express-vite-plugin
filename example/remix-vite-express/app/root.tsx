@@ -6,7 +6,7 @@ import {
   ScrollRestoration,
 } from '@remix-run/react'
 
-import { session } from '#app/middleware/session.ts'
+import { session } from '#app/middleware/session'
 import { serverOnly$ } from 'vite-env-only'
 
 // export your middleware as array of functions that Remix will call

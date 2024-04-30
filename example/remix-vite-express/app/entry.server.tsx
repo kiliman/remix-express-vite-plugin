@@ -13,8 +13,8 @@ import { isbot } from 'isbot'
 import { renderToPipeableStream } from 'react-dom/server'
 import { createExpressApp } from 'remix-create-express-app'
 import morgan from 'morgan'
-import { sayHello } from '#app/hello.server.ts'
-import { type SessionData, type SessionFlashData } from '#/app/session'
+import { sayHello } from '#app/hello.server'
+import { type SessionData, type SessionFlashData } from '#app/session.server'
 
 const ABORT_DELAY = 5_000
 

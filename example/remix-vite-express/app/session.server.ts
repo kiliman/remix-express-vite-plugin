@@ -1,5 +1,4 @@
 import { createCookieSessionStorage } from '@remix-run/node'
-// import { serverOnly$ } from 'vite-env-only'
 
 export type SessionData = {
   count: number

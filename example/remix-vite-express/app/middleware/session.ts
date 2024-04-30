@@ -1,10 +1,12 @@
+// middleware/session.ts
 import { MiddlewareFunctionArgs } from 'remix-create-express-app/middleware'
-import { commitSession, getSession } from '#app/session.ts'
+import { commitSession, getSession } from '#app/session.server'
 
 export type SessionMiddlewareArgs = {
   isCookieSessionStorage: boolean
 }
 
+// session middleware that auto-commits the session cookie when mutated
 export function session({ isCookieSessionStorage }: SessionMiddlewareArgs) {
   return async ({ request, context, next }: MiddlewareFunctionArgs) => {
     const session = await getSession(request.headers.get('Cookie'))
