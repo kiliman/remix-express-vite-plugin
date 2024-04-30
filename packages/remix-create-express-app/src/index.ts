@@ -8,6 +8,7 @@ import {
 import { type ServerBuild } from '@remix-run/node'
 import express, { type Application } from 'express'
 import sourceMapSupport from 'source-map-support'
+import { createMiddlewareRequestHandler } from './middleware'
 
 type CreateRequestHandlerFunction = typeof createExpressRequestHandler
 
@@ -19,6 +20,7 @@ export type CreateExpressAppArgs = {
   ) => CreateRequestHandlerFunction
   getExpress?: () => Application
   createServer?: (app: Application) => Server
+  unstable_middleware?: boolean
 }
 
 export function createExpressApp({
@@ -27,6 +29,7 @@ export function createExpressApp({
   customRequestHandler,
   getExpress,
   createServer,
+  unstable_middleware,
 }: CreateExpressAppArgs) {
   sourceMapSupport.install({
     retrieveSourceMap: function (source) {
@@ -68,7 +71,9 @@ export function createExpressApp({
   // call custom configure function if provided
   configure?.(app)
 
-  const defaultCreateRequestHandler = createExpressRequestHandler
+  const defaultCreateRequestHandler = unstable_middleware
+    ? createMiddlewareRequestHandler
+    : createExpressRequestHandler
 
   const createRequestHandler =
     customRequestHandler?.(
