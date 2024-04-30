@@ -2,7 +2,7 @@ import { type GetLoadContextFunction } from '@remix-run/express'
 import {
   createRemixRequest,
   sendRemixResponse,
-} from '@remix-run/express/dist/server'
+} from '@remix-run/express/dist/server.js'
 import {
   createRequestHandler as createRemixRequestHandler,
   type AppLoadContext,
@@ -10,7 +10,7 @@ import {
 } from '@remix-run/node'
 import { matchRoutes } from '@remix-run/react'
 import type express from 'express'
-import { getRoutes } from '.'
+import { getRoutes } from './routes.js'
 
 export type MiddlewareFunctionArgs = {
   request: Request

@@ -8,7 +8,8 @@ import {
 import { type ServerBuild } from '@remix-run/node'
 import express, { type Application } from 'express'
 import sourceMapSupport from 'source-map-support'
-import { createMiddlewareRequestHandler } from './middleware'
+import { createMiddlewareRequestHandler } from './middleware.js'
+import { setRoutes } from './routes.js'
 
 type CreateRequestHandlerFunction = typeof createExpressRequestHandler
 
@@ -47,6 +48,7 @@ export function createExpressApp({
       return null
     },
   })
+
   const mode =
     process.env.NODE_ENV === 'test' ? 'development' : process.env.NODE_ENV
 
@@ -148,40 +150,4 @@ function importDevBuild() {
       setRoutes(build as ServerBuild)
       return build as ServerBuild
     }) as Promise<ServerBuild>
-}
-
-type RouteObject = ServerBuild['routes']['root']
-type ReactRouterRouteObject = RouteObject & {
-  children: ReactRouterRouteObject[]
-}
-
-let routes: ReactRouterRouteObject[]
-function setRoutes(build: ServerBuild) {
-  routes = convertRoutes(build.routes)
-}
-export function getRoutes() {
-  return routes
-}
-
-// convert Remix routes to React Router routes
-function convertRoutes(routes: ServerBuild['routes']) {
-  if (!routes) {
-    return []
-  }
-
-  const routeConfigs = Object.values(routes)
-
-  function getChildren(parentId: string): ReactRouterRouteObject[] {
-    return routeConfigs
-      .filter(route => route.parentId === parentId)
-      .map((route: RouteObject) => {
-        return {
-          ...route,
-          children: getChildren(route.id),
-        }
-      })
-  }
-  return [
-    { ...routes['root'], children: getChildren('root') },
-  ] as ReactRouterRouteObject[]
 }

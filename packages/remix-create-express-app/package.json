@@ -6,9 +6,10 @@
   "main": "./dist/index.js",
   "sideEffects": false,
   "exports": {
-    "./package.json": "./package.json",
     ".": "./dist/index.js",
-    "./middleware": "./dist/middleware.js"
+    "./middleware": "./dist/middleware.js",
+    "./routes": "./dist/routes.js",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist/**/*.js",
@@ -17,7 +18,9 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsc --project tsconfig.build.json --module esnext --outDir ./dist"
+    "clean": "rimraf dist",
+    "build": "npm run clean && esbuild src/* --format=esm --platform=node --outdir=dist/ && npm run build:types",
+    "build:types": "tsc --project tsconfig.build.json --module esnext --outDir ./dist"
   },
   "author": "",
   "license": "ISC",
@@ -33,6 +36,7 @@
     "@types/source-map-support": "^0.5.10",
     "esbuild": "^0.20.2",
     "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
     "typescript": "^5.4.5",
     "vite": "^5.2.10"
   }
