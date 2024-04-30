@@ -6,7 +6,7 @@
 
 import { PassThrough } from 'node:stream'
 
-import type { AppLoadContext, EntryContext } from '@remix-run/node'
+import type { AppLoadContext, EntryContext, Session } from '@remix-run/node'
 import { createReadableStreamFromReadable } from '@remix-run/node'
 import { RemixServer } from '@remix-run/react'
 import { isbot } from 'isbot'
@@ -14,6 +14,7 @@ import { renderToPipeableStream } from 'react-dom/server'
 import { createExpressApp } from 'remix-create-express-app'
 import morgan from 'morgan'
 import { sayHello } from '#app/hello.server.ts'
+import { type SessionData, type SessionFlashData } from '#/app/session'
 
 const ABORT_DELAY = 5_000
 
@@ -145,6 +146,7 @@ function handleBrowserRequest(
 declare module '@remix-run/server-runtime' {
   export interface AppLoadContext {
     sayHello: () => string
+    session: Session<SessionData, SessionFlashData>
   }
 }
 
@@ -155,6 +157,7 @@ export const app = createExpressApp({
   },
   getLoadContext: () => {
     // return the AppLoadContext
-    return { sayHello }
+    return { sayHello } as AppLoadContext
   },
+  unstable_middleware: true,
 })

@@ -20,8 +20,8 @@
     "cross-env": "^7.0.3",
     "isbot": "^4.1.0",
     "morgan": "^1.10.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.0.0-beta-94eed63c49-20240425",
+    "react-dom": "^19.0.0-beta-94eed63c49-20240425",
     "remix-create-express-app": "file:../../packages/remix-create-express-app"
   },
   "devDependencies": {
@@ -40,7 +40,12 @@
     "remix-express-dev-server": "file:../../packages/remix-express-dev-server",
     "typescript": "^5.1.6",
     "vite": "^5.1.0",
+    "vite-env-only": "^2.2.1",
     "vite-tsconfig-paths": "^4.2.1"
+  },
+  "overrides": {
+    "react": "$react",
+    "react-dom": "$react-dom"
   },
   "engines": {
     "node": ">=18.0.0"
