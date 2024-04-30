@@ -69,12 +69,3 @@ Make sure to set `NODE_ENV=production`, otherwise it will not create your server
   }
 }
 ```
-
-## Known Issues
-
-- For some reason, when running the Vite dev server, we get the warning:
-
-`WebSocket server error: Port is already in use`
-
-This doesn't appear to cause any problems. The app works and HMR functions
-correctly.
