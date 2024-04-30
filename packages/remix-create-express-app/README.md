@@ -89,7 +89,7 @@ declare module '@remix-run/node' {
   }
 }
 
-export default createExpressApp({
+export const app = createExpressApp({
   configure: app => {
     // setup additional express middleware here
     app.use(compression())
