@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.1
+
+- 🐛 Fix package build: "Cannot find module" ESM is hard! [#4]
+
 ## v0.3.0
 
 - ✨ Add Remix Middleware support
