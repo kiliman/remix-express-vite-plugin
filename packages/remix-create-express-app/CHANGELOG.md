@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.0
+
+- ✨ Add Remix Middleware support
+
 ## v0.2.0
 
 - 🚨 Breaking Change: split package into two separate packages

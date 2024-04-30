@@ -1,7 +1,7 @@
 {
   "name": "remix-create-express-app",
-  "version": "0.2.0",
-  "description": "This package includes helper function to create an Express app in your entry.server.tsx file. It allows you to customize your server.",
+  "version": "0.3.0",
+  "description": "This package includes helper function to create an Express app in your entry.server.tsx file. It allows you to customize your server. It also adds support for Middleware to Remix",
   "type": "module",
   "main": "./dist/index.js",
   "sideEffects": false,
