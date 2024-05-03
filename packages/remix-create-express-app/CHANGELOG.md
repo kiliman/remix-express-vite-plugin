@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.3.2
+
+- 🐛 Fix import of production build on Windows [#9]
+- ✨ Create default app similar to Remix App Server if no configure provided
+- ✨ Pass the Remix ServerBuild to the getLoadContext function
+
 ## v0.3.1
 
 - 🐛 Fix package build: "Cannot find module" ESM is hard! [#4]
