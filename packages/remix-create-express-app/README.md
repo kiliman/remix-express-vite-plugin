@@ -1,7 +1,9 @@
 # remix-create-express-app
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 This package contains a helper function that enables you to create your Express
@@ -68,7 +70,9 @@ export type CreateExpressAppArgs = {
 }
 ```
 
-You can add additional Express middleware with the `configure` function.
+You can add additional Express middleware with the `configure` function. If you
+do not provide a function, it will create a default Express app similar to the
+Remix App Server.
 
 If you want to set up the Remix `AppLoadContext`, pass in a function to `getLoadContext`.
 Modify the `AppLoadContext` interface used in your app.

@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import path from 'node:path';
+import path from 'node:path'
 import { type Server } from 'node:net'
 import url from 'node:url'
 import {
@@ -11,6 +11,8 @@ import express, { type Application } from 'express'
 import sourceMapSupport from 'source-map-support'
 import { createMiddlewareRequestHandler } from './middleware.js'
 import { setRoutes } from './routes.js'
+import compression from 'compression'
+import morgan from 'morgan'
 
 type CreateRequestHandlerFunction = typeof createExpressRequestHandler
 
@@ -71,8 +73,15 @@ export function createExpressApp({
     }),
   )
 
-  // call custom configure function if provided
-  configure?.(app)
+  if (configure) {
+    // call custom configure function if provided
+    configure(app)
+  } else {
+    // otherwise setup default middleware similar to remix app server
+    app.disable('x-powered-by')
+    app.use(compression())
+    app.use(morgan('tiny'))
+  }
 
   const defaultCreateRequestHandler = unstable_middleware
     ? createMiddlewareRequestHandler
