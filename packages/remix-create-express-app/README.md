@@ -1,5 +1,11 @@
 # remix-create-express-app
 
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 This package contains a helper function that enables you to create your Express
 app directly from you _entry.server.tsx_. Since the Express app is built along
 with the rest of your Remix app, you may import app modules as needed. It also
@@ -388,3 +394,34 @@ return response from root.middleware1
 --- finally return resopnse to client ---
 return response to client
 ```
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://kiliman.dev/"><img src="https://avatars.githubusercontent.com/u/47168?v=4?s=100" width="100px;" alt="Michael Carter"/><br /><sub><b>Michael Carter</b></sub></a><br /><a href="https://github.com/kiliman/remix-create-express-app/commits?author=kiliman" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td align="center" size="13px" colspan="7">
+        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
+          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
+        </img>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

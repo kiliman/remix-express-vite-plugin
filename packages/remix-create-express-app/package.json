@@ -34,6 +34,7 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/source-map-support": "^0.5.10",
+    "all-contributors-cli": "^6.26.1",
     "esbuild": "^0.20.2",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
