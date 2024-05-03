@@ -4,9 +4,9 @@ import { type Server } from 'node:net'
 import url from 'node:url'
 import {
   createRequestHandler as createExpressRequestHandler,
-  type GetLoadContextFunction,
+  GetLoadContextFunction as ExpressGetLoadContextFunction,
 } from '@remix-run/express'
-import { type ServerBuild } from '@remix-run/node'
+import { AppLoadContext, type ServerBuild } from '@remix-run/node'
 import express, { type Application } from 'express'
 import sourceMapSupport from 'source-map-support'
 import { createMiddlewareRequestHandler } from './middleware.js'
@@ -15,6 +15,13 @@ import compression from 'compression'
 import morgan from 'morgan'
 
 type CreateRequestHandlerFunction = typeof createExpressRequestHandler
+type GetLoadContextFunction = (
+  req: express.Request,
+  res: express.Response,
+  args: {
+    build: ServerBuild
+  },
+) => Promise<AppLoadContext> | AppLoadContext
 
 export type CreateExpressAppArgs = {
   configure?: (app: Application) => void
@@ -104,11 +111,16 @@ export function createExpressApp({
         ? await importProductionBuild()
         : await importDevBuild()
 
-      return createRequestHandler({ build, mode, getLoadContext })(
-        req,
-        res,
-        next,
-      )
+      const expressGetLoadContextFunction: ExpressGetLoadContextFunction =
+        async (req, res) => {
+          return getLoadContext?.(req, res, { build }) ?? {}
+        }
+
+      return createRequestHandler({
+        build,
+        mode,
+        getLoadContext: expressGetLoadContextFunction,
+      })(req, res, next)
     },
   )
 
