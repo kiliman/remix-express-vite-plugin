@@ -14,6 +14,13 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/47168?v=4",
       "profile": "https://kiliman.dev/",
       "contributions": ["code"]
+    },
+    {
+      "login": "wKovacs64",
+      "name": "Justin Hall",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1288694?v=4",
+      "profile": "https://justinrhall.dev/",
+      "contributions": ["code"]
     }
   ],
   "contributorsPerLine": 7,
