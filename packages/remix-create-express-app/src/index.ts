@@ -138,15 +138,15 @@ const viteDevServer =
 function importProductionBuild() {
   return import(
     /*@vite-ignore*/
-    url.pathToFileURL(
-      path.resolve(path.join(process.cwd(), "/build/server/index.js")),
-    )
-  ).then(
-    build => {
-      setRoutes(build)
-      return build
-    },
-  ) as Promise<ServerBuild>
+    url
+      .pathToFileURL(
+        path.resolve(path.join(process.cwd(), '/build/server/index.js')),
+      )
+      .toString()
+  ).then(build => {
+    setRoutes(build)
+    return build
+  }) as Promise<ServerBuild>
 }
 
 function importDevBuild() {
