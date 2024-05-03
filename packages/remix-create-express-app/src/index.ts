@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import path from 'node:path';
 import { type Server } from 'node:net'
 import url from 'node:url'
 import {
@@ -135,7 +136,12 @@ const viteDevServer =
       )
 
 function importProductionBuild() {
-  return import(/*@vite-ignore*/ process.cwd() + '/build/server/index.js').then(
+  return import(
+    /*@vite-ignore*/
+    url.pathToFileURL(
+      path.resolve(path.join(process.cwd(), "/build/server/index.js")),
+    )
+  ).then(
     build => {
       setRoutes(build)
       return build
