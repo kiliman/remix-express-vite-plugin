@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.3.3
+
+- 🔨 Middleware function must return a response or throw
+- 🐛 Add `params` object to middleware function call [#7]
+- 🐛 Ignore headers that start with `:` from http2 [#10]
+
 ## v0.3.2
 
 - 🐛 Fix import of production build on Windows [#9]
