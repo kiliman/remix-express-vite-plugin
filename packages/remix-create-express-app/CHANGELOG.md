@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.4
+
+🔨 Make createExpressApp args optional
+
 ## v0.3.3
 
 - 🔨 Middleware function must return a response or throw
