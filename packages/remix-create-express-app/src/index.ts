@@ -5,7 +5,7 @@ import url from 'node:url'
 import {
   createRequestHandler as createExpressRequestHandler,
   GetLoadContextFunction as ExpressGetLoadContextFunction,
-} from '@remix-run/express'
+} from './remix.js'
 import { AppLoadContext, type ServerBuild } from '@remix-run/node'
 import express, { type Application } from 'express'
 import sourceMapSupport from 'source-map-support'

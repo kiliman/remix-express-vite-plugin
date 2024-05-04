@@ -1,8 +1,8 @@
-import { type GetLoadContextFunction } from '@remix-run/express'
 import {
   createRemixRequest,
   sendRemixResponse,
-} from '@remix-run/express/dist/server.js'
+  type GetLoadContextFunction,
+} from './remix.js'
 import {
   createRequestHandler as createRemixRequestHandler,
   type AppLoadContext,
