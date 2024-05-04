@@ -8,7 +8,7 @@ import { Form, useLoaderData } from '@remix-run/react'
 export async function loader({ context }: LoaderFunctionArgs) {
   const count = Number(context.session.get('count') || 0)
 
-  return { message: context.sayHello(), count }
+  return { message: context.sayHello(), now: Date.now(), count }
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
