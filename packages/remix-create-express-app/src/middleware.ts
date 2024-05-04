@@ -59,6 +59,7 @@ export function createMiddlewareRequestHandler({
 
       // @ts-expect-error routes type
       const matches = matchRoutes(routes, url) ?? [] // get matches for the url
+      const leafMatch = matches.at(-1)
       const middleware =
         matches
           // @ts-expect-error route module
@@ -79,8 +80,14 @@ export function createMiddlewareRequestHandler({
           if (!fn) {
             return await handleRequest(request, context)
           }
-          // @ts-expect-error middleware return type
-          return await fn({ request, context, matches, next })
+          return fn({
+            request,
+            params: (leafMatch?.params ?? {}) as Record<string, string>,
+            context,
+            matches,
+            // @ts-ignore-next-line
+            next,
+          })
         } catch (e) {
           // stop middleware
           index = middleware.length
