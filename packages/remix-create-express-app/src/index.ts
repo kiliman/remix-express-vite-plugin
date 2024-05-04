@@ -41,7 +41,7 @@ export function createExpressApp({
   getExpress,
   createServer,
   unstable_middleware,
-}: CreateExpressAppArgs) {
+}: CreateExpressAppArgs = {}) {
   sourceMapSupport.install({
     retrieveSourceMap: function (source) {
       const match = source.startsWith('file://')
