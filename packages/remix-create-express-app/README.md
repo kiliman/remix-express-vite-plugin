@@ -230,9 +230,7 @@ export type MiddlewareFunctionArgs = {
   next: () => Promise<Response>
 }
 
-export type MiddleWareFunction = (
-  args: MiddlewareFunctionArgs,
-) => Response | undefined
+export type MiddleWareFunction = (args: MiddlewareFunctionArgs) => Response
 ```
 
 You can have multiple middleware functions for a given route. In your route, export the
@@ -243,33 +241,33 @@ You can have multiple middleware functions for a given route. In your route, exp
 export middleware = [middleware1, middleware2, middleware3]
 ```
 
-When a URL is request, the Express handler will first get the matching routes,
+When a URL is requested, the Express handler will first get the matching routes,
 the same way that Remix matches routes. It will get a list of routes from the
 root route to the leaf route.
 
 It then checks each matching route for a `middleware` export. Finally, it combines
 all the `middleware` arrays for all the matching routes to create a single array
-of middleware function (via `flatMap`). They will then be executed in the order
+of middleware functions (via `flatMap`). They will then be executed in the order
 they were defined from the _root_ to the leaf route.
 
 NOTE: These middleware functions are executed in serial, unlike loaders. Once all
 the middleware are executed, Remix will then run the matching loaders and actions
 in parallel as usual.
 
-Each middleware function receives the current `context` object that is initialized by the
+Each middleware function receives the current `context` object initialized by the
 `getLoadContext` function in `createExpressApp`. This context object is _mutable_
-and will be passed along the middleware chain. This way each middleware function
+and passed along the middleware chain. This way, each middleware function
 can add additional data to the context or perform logic based on this data.
 
-In addition, middleware function can inspect the `Request` object. It can also
+In addition, the middleware function can inspect the `Request` object. It can also
 modify the request by adding or removing headers.
 
 A middleware function is responsible for calling the `next` function and returning
-the response that is returned.
+the response.
 
-The middleware function can inspect the response as well as update the headers. This
+The middleware function can inspect the response and update the headers. This
 response is passed back up the middleware chain, and then after the final middleware
-function returns, the response is then sent to the client.
+function returns, the response is sent to the client.
 
 Here is an example middleware. It adds the `session` object to the `context`. In
 addition to making it easy to access the session, it will also commit
