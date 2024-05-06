@@ -2,6 +2,7 @@ import {
   createRemixRequest,
   sendRemixResponse,
   type GetLoadContextFunction,
+  createMiddlewareRequest,
 } from './remix.js'
 import {
   createRequestHandler as createRemixRequestHandler,
@@ -39,23 +40,27 @@ export function createMiddlewareRequestHandler({
   getLoadContext?: GetLoadContextFunction
   mode?: string
 }): RequestHandler {
-  const handleRequest = createRemixRequestHandler(build, mode)
+  const handleRemixRequest = createRemixRequestHandler(build, mode)
   return async (
     req: express.Request,
     res: express.Response,
     expressNext: express.NextFunction,
   ) => {
     try {
-      const request = createRemixRequest(req, res)
-      const loadContext = await getLoadContext?.(req, res)
-
-      const routes = getRoutes()
       let url = req.url
       let isDataRequest = false
       if (url.endsWith('.data')) {
         isDataRequest = true
         url = url.replace(/\.data$/, '')
+        req.url = url
       }
+
+      const request = createRemixRequest(req, res)
+      // separate request to strip .data from url
+      const middlewareRequest = createMiddlewareRequest(req, res)
+      const loadContext = await getLoadContext?.(req, res)
+
+      const routes = getRoutes()
 
       // @ts-expect-error routes type
       const matches = matchRoutes(routes, url) ?? [] // get matches for the url
@@ -72,16 +77,19 @@ export function createMiddlewareRequestHandler({
       const context = loadContext ?? ({} as AppLoadContext)
 
       let index = 0
+      let lastCaughtResponse
+      let lastCaughtError
+
       // eslint-disable-next-line no-inner-declarations
       // @ts-ignore-next-line
       async function next() {
         try {
           const fn = middleware[index++]
           if (!fn) {
-            return await handleRequest(request, context)
+            return await handleRemixRequest(request, context)
           }
           return fn({
-            request,
+            request: middlewareRequest,
             params: (leafMatch?.params ?? {}) as Record<string, string>,
             context,
             matches,
@@ -91,17 +99,11 @@ export function createMiddlewareRequestHandler({
         } catch (e) {
           // stop middleware
           index = middleware.length
-          // TODO: handle errors and thrown responses
-          // if (e instanceof Error) {
-          //   console.error(e)
-          //   return new Response(e.message, { status: 500 })
-          // } else if (
-          //   e instanceof Response &&
-          //   e.status >= 300 &&
-          //   e.status < 400
-          // ) {
-          //   throw e
-          // }
+          if (e instanceof Response) {
+            lastCaughtResponse = e
+          } else {
+            lastCaughtError = e
+          }
         }
       }
 
@@ -110,17 +112,49 @@ export function createMiddlewareRequestHandler({
         // start middleware/remix chain
         response = await next()
       } catch (e) {
-        console.error('initial next', e)
+        if (e instanceof Response) {
+          lastCaughtResponse = e
+        } else {
+          lastCaughtError = e
+        }
+      }
+      if (lastCaughtResponse) {
+        response = lastCaughtResponse
+      }
+      if (lastCaughtError) {
+        response = Response.json(lastCaughtError, { status: 500 })
       }
 
       if (!response) {
         throw new Error('Middleware must return the Response from next()')
       }
-      await sendRemixResponse(res, response)
+
+      const isRedirect = isRedirectResponse(response)
+      if (isDataRequest && isRedirect) {
+        const status = response.status
+        const location = response.headers.get('Location')
+        // HACK to get correct turbo-stream response
+        // I'll figure this out later
+        let body = `[["SingleFetchRedirect",1],{"2":3,"4":5,"6":7,"8":7},"redirect","${location}","status",${status},"revalidate",false,"reload"]`
+
+        response = new Response(body, {
+          status: 200,
+          headers: (response as unknown as Response).headers,
+        })
+        response.headers.set('Content-Type', 'text/x-turbo; charset=utf-8')
+        response.headers.set('X-Remix-Response', 'yes')
+        response.headers.delete('Location')
+      }
+
+      await sendRemixResponse(res, response as unknown as Response)
     } catch (error) {
       // Express doesn't support async functions, so we have to pass along the
       // error manually using next().
       expressNext(error)
     }
   }
+}
+
+function isRedirectResponse(response: Response) {
+  return response.status >= 300 && response.status < 400
 }

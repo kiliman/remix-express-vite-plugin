@@ -119,6 +119,43 @@ export function createRemixRequest(
   return new Request(url.href, init)
 }
 
+export function createMiddlewareRequest(
+  req: express.Request,
+  res: express.Response,
+): Request {
+  // req.hostname doesn't include port information so grab that from
+  // `X-Forwarded-Host` or `Host`
+  let [, hostnamePort] = req.get('X-Forwarded-Host')?.split(':') ?? []
+  let [, hostPort] = req.get('host')?.split(':') ?? []
+  let port = hostnamePort || hostPort
+  // Use req.hostname here as it respects the "trust proxy" setting
+  let resolvedHost = `${req.hostname}${port ? `:${port}` : ''}`
+  // Use `req.originalUrl` so Remix is aware of the full path
+  let originalUrl = req.originalUrl
+  if (originalUrl.endsWith('.data')) {
+    originalUrl = originalUrl.replace(/\.data$/, '')
+  }
+
+  let url = new URL(`${req.protocol}://${resolvedHost}${originalUrl}`)
+
+  // Abort action/loaders once we can no longer write a response
+  let controller = new AbortController()
+  res.on('close', () => controller.abort())
+
+  let init: RequestInit = {
+    method: req.method,
+    headers: createRemixHeaders(req.headers),
+    signal: controller.signal,
+  }
+
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    init.body = createReadableStreamFromReadable(req)
+    ;(init as { duplex: 'half' }).duplex = 'half'
+  }
+
+  return new Request(url.href, init)
+}
+
 export async function sendRemixResponse(
   res: express.Response,
   nodeResponse: Response,
