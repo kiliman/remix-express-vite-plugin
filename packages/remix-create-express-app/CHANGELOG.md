@@ -1,8 +1,12 @@
 # CHANGELOG
 
+## v0.3.5
+
+- ✨ Add redirect support from middleware
+
 ## v0.3.4
 
-🔨 Make createExpressApp args optional
+- 🔨 Make createExpressApp args optional
 
 ## v0.3.3
 
