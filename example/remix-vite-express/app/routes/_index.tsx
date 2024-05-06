@@ -14,7 +14,16 @@ export default function Index() {
       <h1>Welcome to Remix</h1>
       <ul>
         <li>
-          <Link to="test">Test</Link>
+          <Link to="/test">Test</Link>
+        </li>
+        <li>
+          <Link to="/test-redirect">Test Redirect</Link>
+        </li>
+        <li>
+          <Link to="/test-error">Test Error</Link>
+        </li>
+        <li>
+          <Link to="/dashboard">Dashboard</Link>
         </li>
       </ul>
     </div>
