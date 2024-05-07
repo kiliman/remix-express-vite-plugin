@@ -216,6 +216,16 @@ export default defineConfig({
   ],
 })
 ```
+You will also need to enable the `unstable_middleware` setting in your `createExpressApp` call.
+
+```ts
+// entry.server.tsx
+
+export const app = createExpressApp({
+  //...
+  unstable_middleware: true,
+}
+```
 
 ### Creating Middleware
 
