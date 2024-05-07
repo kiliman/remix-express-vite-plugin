@@ -1,13 +1,20 @@
 // middleware/session.ts
+import { type SessionStorage, type Session } from '@remix-run/node'
+import { createContext } from 'remix-create-express-app/context'
 import { MiddlewareFunctionArgs } from 'remix-create-express-app/middleware'
-import { commitSession, getSession } from '#app/session.server'
 
 export type SessionMiddlewareArgs = {
   isCookieSessionStorage: boolean
 }
 
-// session middleware that auto-commits the session cookie when mutated
-export function session({ isCookieSessionStorage }: SessionMiddlewareArgs) {
+// create SessionContext for use with context.get and .set
+export const SessionContext =
+  createContext<Session<SessionData, SessionFlashData>>()
+
+// creates session middleware that auto-commits the session cookie when mutated
+export function createSessionMiddleware(storage: SessionStorage) {
+  const { getSession, commitSession } = storage
+
   return async ({ request, context, next }: MiddlewareFunctionArgs) => {
     const session = await getSession(request.headers.get('Cookie'))
     type PropType = keyof typeof session
@@ -16,23 +23,25 @@ export function session({ isCookieSessionStorage }: SessionMiddlewareArgs) {
     // so we can commit it back to the store
     const sessionProxy = {
       _isDirty: false,
+      _data: JSON.stringify(session.data),
       get isDirty() {
-        return this._isDirty
+        return this._isDirty || this._data !== JSON.stringify(session.data)
       },
       get(target: typeof session, prop: PropType) {
-        this._isDirty ||= ['set', 'unset', 'destroy'].includes(prop)
+        this._isDirty ||= ['set', 'unset', 'destroy', 'flash'].includes(prop)
         return target[prop]
       },
     }
-    context.session = new Proxy(session, sessionProxy) as typeof session
+
+    const session$ = new Proxy(session, sessionProxy) as typeof session
+    // set the session context
+    context.set(SessionContext, session$)
 
     const response = await next()
 
     if (sessionProxy.isDirty) {
-      const result = await commitSession(context.session as typeof session)
-      if (isCookieSessionStorage) {
-        response.headers.append('Set-Cookie', result)
-      }
+      const result = await commitSession(session$)
+      response.headers.append('Set-Cookie', result)
     }
     return response
   }

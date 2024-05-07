@@ -9,15 +9,25 @@ import {
   useRouteError,
 } from '@remix-run/react'
 
-import { session } from '#app/middleware/session'
+import { createSessionMiddleware } from '#app/middleware/session'
 import { serverOnly$ } from 'vite-env-only'
+import { createCookieSessionStorage } from '@remix-run/node'
+
+const session = createSessionMiddleware(
+  createCookieSessionStorage<SessionData, SessionFlashData>({
+    cookie: {
+      name: '__session',
+      path: '/',
+      sameSite: 'lax',
+      secrets: ['s3cret1'],
+    },
+  }),
+)
 
 // export your middleware as array of functions that Remix will call
 // wrap middleware in serverOnly$ to prevent it from being bundled in the browser
 // since remix doesn't know about middleware yet
-export const middleware = serverOnly$([
-  session({ isCookieSessionStorage: true }),
-])
+export const middleware = serverOnly$([session])
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (

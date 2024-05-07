@@ -6,13 +6,7 @@
 
 import { PassThrough } from 'node:stream'
 
-import type {
-  ActionFunctionArgs,
-  AppLoadContext,
-  EntryContext,
-  LoaderFunctionArgs,
-  Session,
-} from '@remix-run/node'
+import { type AppLoadContext, type EntryContext } from '@remix-run/node'
 import { createReadableStreamFromReadable } from '@remix-run/node'
 import { RemixServer } from '@remix-run/react'
 import { isbot } from 'isbot'
@@ -20,7 +14,6 @@ import { renderToPipeableStream } from 'react-dom/server'
 import { createExpressApp } from 'remix-create-express-app'
 import morgan from 'morgan'
 import { sayHello } from '#app/hello.server'
-import { type SessionData, type SessionFlashData } from '#app/session.server'
 
 const ABORT_DELAY = 5_000
 
@@ -79,22 +72,6 @@ export default function handleRequest(
 
     setTimeout(abort, ABORT_DELAY)
   })
-}
-
-export function handleDataRequest(
-  response: Response,
-  { request, params, context }: LoaderFunctionArgs | ActionFunctionArgs,
-) {
-  console.log('handleDataRequest', response)
-  return response
-}
-
-declare module '@remix-run/server-runtime' {
-  export interface AppLoadContext {
-    sayHello: () => string
-    session: Session<SessionData, SessionFlashData>
-    user?: string
-  }
 }
 
 export const app = createExpressApp({

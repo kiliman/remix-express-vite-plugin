@@ -15,7 +15,7 @@ export default function Component() {
     <div>
       <h1>Login</h1>
       <Link to="/">Home</Link>
-      <Form method="post">
+      <Form method="post" replace>
         <input type="text" name="name" defaultValue="kiliman" />
         <button>Login</button>
       </Form>

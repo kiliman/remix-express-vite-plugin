@@ -4,7 +4,7 @@ import { requireAuth } from '#app/middleware/requireAuth'
 export const middleware = serverOnly$([requireAuth])
 
 import { type LoaderFunctionArgs } from '@remix-run/node'
-import { Form, Outlet, useLoaderData } from '@remix-run/react'
+import { Form, Link, Outlet, useLoaderData } from '@remix-run/react'
 
 export async function loader({ context }: LoaderFunctionArgs) {
   return { user: context.user }
@@ -24,6 +24,7 @@ export default function Component() {
         }}
       >
         <h1>Welcome {user}</h1>
+        <Link to="/">Home</Link>
         <Form method="post" action="/logout">
           <button>Logout</button>
         </Form>
