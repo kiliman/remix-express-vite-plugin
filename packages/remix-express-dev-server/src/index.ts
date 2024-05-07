@@ -55,7 +55,6 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
               }
             }
           }
-          console.log('remix')
 
           let build
 
