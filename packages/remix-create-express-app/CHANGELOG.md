@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.6
+
+- ✨ Add new ServerContext API
+
 ## v0.3.5
 
 - ✨ Add redirect support from middleware
