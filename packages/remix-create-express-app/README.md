@@ -216,6 +216,7 @@ export default defineConfig({
   ],
 })
 ```
+
 You will also need to enable the `unstable_middleware` setting in your `createExpressApp` call.
 
 ```ts
@@ -235,7 +236,7 @@ A middleware is any function that has the following signature:
 export type MiddlewareFunctionArgs = {
   request: Request
   params: Record<string, string>
-  context: AppLoadContext
+  context: AppLoadContext & ServerContext
   matches: ReturnType<typeof matchRoutes>
   next: () => Promise<Response>
 }
@@ -260,14 +261,52 @@ all the `middleware` arrays for all the matching routes to create a single array
 of middleware functions (via `flatMap`). They will then be executed in the order
 they were defined from the _root_ to the leaf route.
 
-NOTE: These middleware functions are executed in serial, unlike loaders. Once all
+NOTE: These middleware functions are executed sequentially, unlike loaders. Once all
 the middleware are executed, Remix will then run the matching loaders and actions
 in parallel as usual.
+
+### ServerContext
 
 Each middleware function receives the current `context` object initialized by the
 `getLoadContext` function in `createExpressApp`. This context object is _mutable_
 and passed along the middleware chain. This way, each middleware function
 can add additional data to the context or perform logic based on this data.
+
+It also contains the `ServerObject` interface, which are two methods to `get` and
+`set` the context created by `createContext`
+
+```ts
+export type ServerContext = {
+  get: <T>(contextType: ContextType<T>) => T
+  set: <T>(contextType: ContextType<T>, value: T) => void
+}
+
+function createContext<T>(): ContextType<T>
+```
+
+When defining middleware that uses context, you can create a new context object
+by calling `createContext`. This context object is passed to by the `set` and `get`
+methods on the ServerContext object passed to both the middleware functions and
+your loaders and actions.
+
+```ts
+const UserContext = createContext<UserObject>()
+
+// inside middleware
+async function userMiddleware({ request, context }: MiddlewareFunctionArgs) {
+  const cookies = cookie.parse(request.headers.get('Cookie') ?? '')
+  const user = await getUserFromCookie(cookies.user)
+  // set the user in the context from the cookie
+  context.set(UserContext, user)
+  return next()
+}
+
+// inside your loader
+async function loader({ context }: LoaderFunctionArgs) {
+  const user = context.get(UserContext)
+  // ...
+}
+```
 
 In addition, the middleware function can inspect the `Request` object. It can also
 modify the request by adding or removing headers.

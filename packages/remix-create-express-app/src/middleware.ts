@@ -12,11 +12,12 @@ import {
 import { matchRoutes } from '@remix-run/react'
 import type express from 'express'
 import { getRoutes } from './routes.js'
+import { ServerContext, contextGet, contextSet } from './context.js'
 
 export type MiddlewareFunctionArgs = {
   request: Request
   params: Record<string, string>
-  context: AppLoadContext
+  context: AppLoadContext & ServerContext
   matches: ReturnType<typeof matchRoutes>
   next: () => Promise<Response>
 }
@@ -47,24 +48,38 @@ export function createMiddlewareRequestHandler({
     expressNext: express.NextFunction,
   ) => {
     try {
+      const request = createRemixRequest(req, res)
+
+      // need special handling for data requests so middleware functions
+      // don't see special data urls
       let url = req.url
-      let isDataRequest = false
-      if (url.endsWith('.data')) {
-        isDataRequest = true
-        url = url.replace(/\.data$/, '')
+      let isDataRequest = url.endsWith('.data')
+      let isRootData = url === '/_root.data'
+      if (isDataRequest) {
+        url = isRootData ? '/' : url.replace(/\.data$/, '')
         req.url = url
       }
-
-      const request = createRemixRequest(req, res)
-      // separate request to strip .data from url
+      // separate request for middleware functions
       const middlewareRequest = createMiddlewareRequest(req, res)
-      const loadContext = await getLoadContext?.(req, res)
 
+      // setup server context
+      const context = ((await getLoadContext?.(req, res)) ??
+        {}) as AppLoadContext & ServerContext
+      context.set = contextSet
+      context.get = contextGet
+
+      // match routes to determine which middleware to run
       const routes = getRoutes()
 
       // @ts-expect-error routes type
-      const matches = matchRoutes(routes, url) ?? [] // get matches for the url
-      const leafMatch = matches.at(-1)
+      let matches = matchRoutes(routes, url) ?? [] // get matches for the url
+      let leafMatch = matches.at(-1)
+      if (isRootData) {
+        // just return the root route
+        matches = [matches[0]]
+        leafMatch = matches[0]
+      }
+
       const middleware =
         matches
           // @ts-expect-error route module
@@ -73,8 +88,6 @@ export function createMiddlewareRequestHandler({
             // @ts-expect-error route module
             match => match.route?.module['middleware'] as unknown as Middleware,
           ) ?? []
-
-      const context = loadContext ?? ({} as AppLoadContext)
 
       let index = 0
       let lastCaughtResponse
