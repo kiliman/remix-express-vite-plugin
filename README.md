@@ -1,12 +1,5 @@
 # remix-express-vite-plugin
 
-## 🚨 Breaking Change
-
-v0.2.0 has split the package into two separate ones. This is to ensure that
-the Vite plugin can be installed as a dev dependency and Express as a regular
-dependency. Otherwise, you'll end up with all the dev tooling as part of your
-normal dependency and increase your image size (if using containers).
-
 ## Description
 
 This repo contains the following packages:

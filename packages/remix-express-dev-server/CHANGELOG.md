@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.2.1
+
+🐛 Add appDirectory config to support non-app folder [#11]
+
 ## v0.2.0
 
 - 🚨 Breaking Change: split package into two separate packages
