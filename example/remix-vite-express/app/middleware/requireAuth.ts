@@ -1,6 +1,13 @@
 import { redirect } from '@remix-run/node'
 import { type MiddlewareFunctionArgs } from 'remix-create-express-app/middleware'
+import { createContext } from 'remix-create-express-app/context'
 import cookie from 'cookie'
+
+export type User = {
+  name: string
+}
+
+export const UserContext = createContext<User>()
 
 export async function requireAuth({
   request,
@@ -14,6 +21,6 @@ export async function requireAuth({
     throw redirect(`/login?redirectTo=${encodeURI(url.pathname + url.search)}`)
   }
   // set the user in the context from the cookie
-  context.user = cookies.user
+  context.set(UserContext, { name: cookies.user })
   return next()
 }

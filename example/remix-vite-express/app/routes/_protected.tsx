@@ -1,5 +1,5 @@
 import { serverOnly$ } from 'vite-env-only'
-import { requireAuth } from '#app/middleware/requireAuth'
+import { UserContext, requireAuth } from '#app/middleware/requireAuth'
 
 export const middleware = serverOnly$([requireAuth])
 
@@ -7,7 +7,8 @@ import { type LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, Outlet, useLoaderData } from '@remix-run/react'
 
 export async function loader({ context }: LoaderFunctionArgs) {
-  return { user: context.user }
+  const user = context.get(UserContext)
+  return { user }
 }
 
 export default function Component() {
@@ -23,7 +24,7 @@ export default function Component() {
           marginBottom: 16,
         }}
       >
-        <h1>Welcome {user}</h1>
+        <h1>Welcome {user.name}</h1>
         <Link to="/">Home</Link>
         <Form method="post" action="/logout">
           <button>Logout</button>
