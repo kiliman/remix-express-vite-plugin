@@ -5,11 +5,13 @@ import type { Connect, Plugin as VitePlugin, ViteDevServer } from 'vite'
 export type DevServerOptions = {
   entry?: string
   exportName?: string
+  appDirectory?: string
 }
 
 export const defaultOptions: Required<DevServerOptions> = {
   entry: 'virtual:remix/server-build',
   exportName: 'app',
+  appDirectory: './app',
 }
 
 export type Fetch = (request: Request) => Promise<Response>
@@ -17,6 +19,11 @@ export type Fetch = (request: Request) => Promise<Response>
 export function expressDevServer(options?: DevServerOptions): VitePlugin {
   const entry = options?.entry ?? defaultOptions.entry
   const exportName = options?.exportName ?? defaultOptions.exportName
+  let appDirectory = normalizeAppDirectory(
+    options?.appDirectory ?? defaultOptions.appDirectory,
+  )
+
+  const appDirectoryPattern = new RegExp(`^${escapeRegExp(appDirectory)}`)
 
   const plugin: VitePlugin = {
     name: 'remix-express-dev-server',
@@ -29,9 +36,14 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
           res: http.ServerResponse,
           next: Connect.NextFunction,
         ): Promise<void> {
+          console.log(req.url)
           // exclude requests that should be handled by Vite dev server
-          const exclude = [/^\/(app)\/.+/, /^\/@.+$/, /^\/node_modules\/.*/]
-
+          const exclude = [
+            // ignore requests to the app directory
+            appDirectoryPattern,
+            /^\/@.+$/,
+            /^\/node_modules\/.*/,
+          ]
           for (const pattern of exclude) {
             if (req.url) {
               if (pattern instanceof RegExp) {
@@ -43,6 +55,7 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
               }
             }
           }
+          console.log('remix')
 
           let build
 
@@ -78,4 +91,20 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
     },
   }
   return plugin
+}
+
+function normalizeAppDirectory(appDirectory: string) {
+  // replace backslashes with forward slashes
+  appDirectory = appDirectory.replace(/\\/g, '/')
+  // remove leading dot
+  if (appDirectory.startsWith('.')) appDirectory = appDirectory.slice(1)
+  // add leading slash
+  if (!appDirectory.startsWith('/')) appDirectory = `/${appDirectory}`
+  // add trailing slash
+  if (!appDirectory.endsWith('/')) appDirectory = `${appDirectory}/`
+  return appDirectory
+}
+
+function escapeRegExp(string: string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }

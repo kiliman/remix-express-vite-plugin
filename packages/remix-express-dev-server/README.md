@@ -43,6 +43,7 @@ The `expressDevServer` plugin also accepts options:
 export type DevServerOptions = {
   entry?: string // Express app entry: default = 'virtual:remix/server-build'
   entryName?: string // name of express app export: default = app
+  appDirectory?: string // path to remix app directory: default = ./app
 }
 ```
 
