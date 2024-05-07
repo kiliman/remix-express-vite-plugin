@@ -36,7 +36,6 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
           res: http.ServerResponse,
           next: Connect.NextFunction,
         ): Promise<void> {
-          console.log(req.url)
           // exclude requests that should be handled by Vite dev server
           const exclude = [
             // ignore requests to the app directory
