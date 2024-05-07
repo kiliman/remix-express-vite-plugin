@@ -1,0 +1,19 @@
+{
+  "name": "remix-express-vite-plugin",
+  "version": "0.1.0",
+  "description": "A Vite plugin for Remix and Express",
+  "main": "index.js",
+  "workspaces": [
+    "packages/*",
+    "example/*"
+  ],
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
