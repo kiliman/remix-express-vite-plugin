@@ -1,6 +1,6 @@
 {
   "name": "remix-express-dev-server",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "This package includes a Vite plugin to use in your Remix app. It imports the Express app you create in entry.server.tsx.",
   "type": "module",
   "main": "./dist/index.js",

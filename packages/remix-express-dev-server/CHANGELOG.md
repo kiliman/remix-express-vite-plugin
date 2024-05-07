@@ -1,8 +1,12 @@
 # CHANGELOG
 
+## v0.2.2
+
+- 🔥 Remove console.log
+
 ## v0.2.1
 
-🐛 Add appDirectory config to support non-app folder [#11]
+- 🐛 Add appDirectory config to support non-app folder [#11]
 
 ## v0.2.0
 
