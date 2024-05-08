@@ -11,6 +11,14 @@ These two packages work hand-in-hand to enable you to bundle your Express app
 with your Remix app via _entry.server.tsx_. The Vite plugin manages the development
 server and passes requests to your Express app.
 
+## Remix Middleware and Server Context API
+
+This package also unlocks the ability to use _Unofficial_ Remix Middleware and
+Server Context API based on the RFC. 
+
+See the [README](./packages/remix-create-express-app/README.md#Middleware)
+for details.
+
 ## Installation
 
 Install the following npm packages
