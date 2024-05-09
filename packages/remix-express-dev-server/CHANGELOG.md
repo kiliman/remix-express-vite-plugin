@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.2.4
+
+- 🐛 Check to see if physical file exists and send to Vite [#12]
+
 ## v0.2.2
 
 - 🔥 Remove console.log
