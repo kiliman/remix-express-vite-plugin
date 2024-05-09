@@ -1,6 +1,7 @@
 import type http from 'node:http'
 import { minimatch } from 'minimatch'
 import type { Connect, Plugin as VitePlugin, ViteDevServer } from 'vite'
+import fs from 'node:fs'
 
 export type DevServerOptions = {
   entry?: string
@@ -37,12 +38,8 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
           next: Connect.NextFunction,
         ): Promise<void> {
           // exclude requests that should be handled by Vite dev server
-          const exclude = [
-            // ignore requests to the app directory
-            appDirectoryPattern,
-            /^\/@.+$/,
-            /^\/node_modules\/.*/,
-          ]
+          const exclude = [/^\/@.+$/, /^\/node_modules\/.*/]
+
           for (const pattern of exclude) {
             if (req.url) {
               if (pattern instanceof RegExp) {
@@ -52,6 +49,13 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
               } else if (minimatch(req.url?.toString(), pattern)) {
                 return next()
               }
+            }
+          }
+          // check if url is a physical file in the app directory
+          if (appDirectoryPattern.test(req.url!)) {
+            const url = new URL(req.url!, 'http://localhost')
+            if (fs.existsSync(url.pathname.slice(1))) {
+              return next()
             }
           }
 
