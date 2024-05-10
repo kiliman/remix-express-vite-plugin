@@ -52,12 +52,17 @@ export function createMiddlewareRequestHandler({
 
       // need special handling for data requests so middleware functions
       // don't see special data urls
-      let url = req.url
-      let isDataRequest = url.endsWith('.data')
-      let isRootData = url === '/_root.data'
+      let url = new URL(req.url, 'http://localhost')
+      let isDataRequest = url.pathname.endsWith('.data')
+      let isRootData = url.pathname === '/_root.data'
       if (isDataRequest) {
-        url = isRootData ? '/' : url.replace(/\.data$/, '')
-        req.url = url
+        // rebuild url without .data or index query param
+        url.searchParams.delete('index')
+        url = new URL(
+          (isRootData ? '/' : url.pathname.replace(/\.data$/, '')) + url.search,
+          'http://localhost',
+        )
+        req.url = url.pathname + url.search
       }
       // separate request for middleware functions
       const middlewareRequest = createMiddlewareRequest(req, res)
@@ -72,7 +77,7 @@ export function createMiddlewareRequestHandler({
       const routes = getRoutes()
 
       // @ts-expect-error routes type
-      let matches = matchRoutes(routes, url) ?? [] // get matches for the url
+      let matches = matchRoutes(routes, req.url) ?? [] // get matches for the url
       let leafMatch = matches.at(-1)
       if (isRootData) {
         // just return the root route
