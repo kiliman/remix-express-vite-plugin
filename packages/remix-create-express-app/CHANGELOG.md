@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.7
+
+- 🐛 Handle data requests with search params [#14]
+
 ## v0.3.6
 
 - ✨ Add new ServerContext API
