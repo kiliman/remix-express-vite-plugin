@@ -7,12 +7,14 @@ export type DevServerOptions = {
   entry?: string
   exportName?: string
   appDirectory?: string
+  configureServer?: (server: http.Server) => void
 }
 
 export const defaultOptions: Required<DevServerOptions> = {
   entry: 'virtual:remix/server-build',
   exportName: 'app',
   appDirectory: './app',
+  configureServer: () => {},
 }
 
 export type Fetch = (request: Request) => Promise<Response>
@@ -20,6 +22,8 @@ export type Fetch = (request: Request) => Promise<Response>
 export function expressDevServer(options?: DevServerOptions): VitePlugin {
   const entry = options?.entry ?? defaultOptions.entry
   const exportName = options?.exportName ?? defaultOptions.exportName
+  const configureServer =
+    options?.configureServer ?? defaultOptions.configureServer
   let appDirectory = normalizeAppDirectory(
     options?.appDirectory ?? defaultOptions.appDirectory,
   )
@@ -32,6 +36,9 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
       async function createMiddleware(
         server: ViteDevServer,
       ): Promise<Connect.HandleFunction> {
+        // allow for additional configuration of vite dev server
+        configureServer(server.httpServer as http.Server)
+
         return async function (
           req: http.IncomingMessage,
           res: http.ServerResponse,

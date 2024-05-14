@@ -44,6 +44,8 @@ export type DevServerOptions = {
   entry?: string // Express app entry: default = 'virtual:remix/server-build'
   entryName?: string // name of express app export: default = app
   appDirectory?: string // path to remix app directory: default = ./app
+  configureServer?: (server: http.Server) => void // allow additional configuration
+  // of Vite dev server (like setting up socket.io)
 }
 ```
 
@@ -69,4 +71,53 @@ Make sure to set `NODE_ENV=production`, otherwise it will not create your server
     "start": "NODE_ENV=production node ./build/server/index.js"
   }
 }
+```
+
+## Advanced configuration
+
+### Socket.io
+
+You can wrap the Vite dev server with the socket.io server.
+
+> NOTE: `configureServer` is only called for development. In production, use the
+> `createExpressApp({ createServer })` function to initialize socket.io. You
+> can import same init function in both places.
+
+```ts
+// vite.config.ts
+export default defineConfig({
+  plugins: [
+    expressDevServer({
+      configureServer(server) {
+        const io = new Server(server)
+
+        io.on('upgrade', async (req, socket, head) => {
+          console.log(
+            `Attemping to upgrade connection at url ${
+              req.url
+            } with headers: ${JSON.stringify(req.headers)}`,
+          )
+
+          socket.on('error', err => {
+            console.error('Connection upgrade error:', err)
+          })
+
+          console.log(`Client connected, upgrading their connection...`)
+        })
+        io.on('connection', socket => {
+          console.log('Client connected')
+          socket.emit('server', 'hello from server')
+          socket.on('client', data => {
+            console.log('Client sent:', data)
+            socket.emit('server', data)
+          })
+          socket.on('disconnect', () => {
+            console.log('Client disconnected')
+          })
+        })
+      },
+    }),
+    // ...
+  ],
+})
 ```
