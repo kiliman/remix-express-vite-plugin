@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.2.5
+
+- ✨ Add `configureServer` option in `expressDevServer` plugin [#6]
+
 ## v0.2.4
 
 - 🐛 Check to see if physical file exists and send to Vite [#12]
