@@ -22,7 +22,9 @@ export type MiddlewareFunctionArgs = {
   next: () => Promise<Response>
 }
 
-export type MiddleWareFunction = (args: MiddlewareFunctionArgs) => Response
+export type MiddleWareFunction = (
+  args: MiddlewareFunctionArgs,
+) => Response | Promise<Response>
 
 export type Middleware = MiddleWareFunction[]
 

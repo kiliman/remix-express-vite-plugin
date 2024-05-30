@@ -241,7 +241,9 @@ export type MiddlewareFunctionArgs = {
   next: () => Promise<Response>
 }
 
-export type MiddleWareFunction = (args: MiddlewareFunctionArgs) => Response
+export type MiddleWareFunction = (
+  args: MiddlewareFunctionArgs,
+) => Response | Promise<Response>
 ```
 
 You can have multiple middleware functions for a given route. In your route, export the
