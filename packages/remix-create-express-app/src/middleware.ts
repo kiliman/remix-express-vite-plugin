@@ -65,7 +65,7 @@ export function createMiddlewareRequestHandler({
           (isRootData ? '/' : url.pathname.replace(/\.data$/, '')) + url.search,
           'http://localhost',
         )
-        req.url = url.pathname + url.search
+        req.originalUrl = url.pathname + url.search
       }
       // separate request for middleware functions
       const middlewareRequest = createMiddlewareRequest(req, res)
