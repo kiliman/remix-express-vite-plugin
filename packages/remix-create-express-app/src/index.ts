@@ -32,6 +32,8 @@ export type CreateExpressAppArgs = {
   getExpress?: () => Application
   createServer?: (app: Application) => Server
   unstable_middleware?: boolean
+  buildDirectory?: string
+  serverBuildFile?: string
 }
 
 export function createExpressApp({
@@ -41,6 +43,8 @@ export function createExpressApp({
   getExpress,
   createServer,
   unstable_middleware,
+  buildDirectory = 'build',
+  serverBuildFile = 'index.js',
 }: CreateExpressAppArgs = {}) {
   sourceMapSupport.install({
     retrieveSourceMap: function (source) {
@@ -69,13 +73,13 @@ export function createExpressApp({
   // Vite fingerprints its assets so we can cache forever.
   app.use(
     '/assets',
-    express.static('build/client/assets', { immutable: true, maxAge: '1y' }),
+    express.static(`${buildDirectory}/client/assets`, { immutable: true, maxAge: '1y' }),
   )
 
   // Everything else (like favicon.ico) is cached for an hour. You may want to be
   // more aggressive with this caching.
   app.use(
-    express.static(isProductionMode ? 'build/client' : 'public', {
+    express.static(isProductionMode ? `${buildDirectory}/client` : 'public', {
       maxAge: '1h',
     }),
   )
@@ -108,7 +112,7 @@ export function createExpressApp({
       next: express.NextFunction,
     ) => {
       const build = isProductionMode
-        ? await importProductionBuild()
+        ? await importProductionBuild(buildDirectory, serverBuildFile)
         : await importDevBuild()
 
       const expressGetLoadContextFunction: ExpressGetLoadContextFunction =
@@ -156,12 +160,12 @@ const viteDevServer =
         }),
       )
 
-function importProductionBuild() {
+function importProductionBuild(buildDirectory: string, serverBuildFile: string) {
   return import(
     /*@vite-ignore*/
     url
       .pathToFileURL(
-        path.resolve(path.join(process.cwd(), '/build/server/index.js')),
+        path.resolve(path.join(process.cwd(), `/${buildDirectory}/server/${serverBuildFile}`)),
       )
       .toString()
   ).then(build => {

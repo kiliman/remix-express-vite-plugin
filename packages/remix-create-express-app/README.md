@@ -67,6 +67,12 @@ export type CreateExpressAppArgs = {
 
   // set to true to use unstable middleware
   unstable_middleware?: boolean
+
+  // remix build directory as defined in vite.config https://remix.run/docs/en/main/file-conventions/vite-config#builddirectory
+  buildDirectory?: string
+  
+  // sever build file as defined in vite.config https://remix.run/docs/en/main/file-conventions/vite-config#serverbuildfile
+  serverBuildFile?: string
 }
 ```
 
