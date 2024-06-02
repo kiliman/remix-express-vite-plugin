@@ -82,11 +82,6 @@ export function createMiddlewareRequestHandler({
       // @ts-expect-error routes type
       let matches = matchRoutes(routes, req.url) ?? [] // get matches for the url
       let leafMatch = matches.at(-1)
-      if (isRootData) {
-        // just return the root route
-        matches = [matches[0]]
-        leafMatch = matches[0]
-      }
 
       const middleware =
         matches
