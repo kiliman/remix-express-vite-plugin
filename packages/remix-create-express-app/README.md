@@ -1,6 +1,6 @@
 # remix-create-express-app
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
@@ -468,6 +468,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://kiliman.dev/"><img src="https://avatars.githubusercontent.com/u/47168?v=4?s=100" width="100px;" alt="Michael Carter"/><br /><sub><b>Michael Carter</b></sub></a><br /><a href="https://github.com/kiliman/remix-create-express-app/commits?author=kiliman" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://justinrhall.dev/"><img src="https://avatars.githubusercontent.com/u/1288694?v=4?s=100" width="100px;" alt="Justin Hall"/><br /><sub><b>Justin Hall</b></sub></a><br /><a href="https://github.com/kiliman/remix-create-express-app/commits?author=wKovacs64" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lsthornt"><img src="https://avatars.githubusercontent.com/u/569689?v=4?s=100" width="100px;" alt="Levi Thornton"/><br /><sub><b>Levi Thornton</b></sub></a><br /><a href="https://github.com/kiliman/remix-create-express-app/commits?author=lsthornt" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thomaswelton"><img src="https://avatars.githubusercontent.com/u/678372?v=4?s=100" width="100px;" alt="Thomas Welton"/><br /><sub><b>Thomas Welton</b></sub></a><br /><a href="https://github.com/kiliman/remix-create-express-app/commits?author=thomaswelton" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
