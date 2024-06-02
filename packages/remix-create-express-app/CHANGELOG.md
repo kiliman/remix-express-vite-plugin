@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v0.3.8
+
+- ✨ Add buildDirectory and serverBuildFile as options to CreateExpressAppArgs [#21]
+- 🐛 Support for partial data requests
+- 🐛 Run all matching middleware even for just root data requests [#19]
+- 🐛 Modify originalUrl to strip data url for middleware requests
+
 ## v0.3.7
 
 - 🐛 Handle data requests with search params [#14]
