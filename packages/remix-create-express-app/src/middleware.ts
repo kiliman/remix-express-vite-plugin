@@ -55,11 +55,12 @@ export function createMiddlewareRequestHandler({
       // need special handling for data requests so middleware functions
       // don't see special data urls
       let url = new URL(req.url, 'http://localhost')
-      let isDataRequest = url.pathname.endsWith('.data')
+      let isDataRequest = url.pathname.endsWith('.data') || url.searchParams.has('_data')
       let isRootData = url.pathname === '/_root.data'
       if (isDataRequest) {
         // rebuild url without .data or index query param
         url.searchParams.delete('index')
+        url.searchParams.delete('_data')
         url = new URL(
           (isRootData ? '/' : url.pathname.replace(/\.data$/, '')) + url.search,
           'http://localhost',
