@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.3.9
+- 🐛 Move minimatch to a dependency [#22]
+
 ## v0.3.8
 
 - ✨ Add buildDirectory and serverBuildFile as options to CreateExpressAppArgs [#21]
