@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v0.3.10
+- ~~🐛 Move minimatch to a dependency [#22]~~
+
 ## v0.3.9
 - 🐛 Move minimatch to a dependency [#22]
 
