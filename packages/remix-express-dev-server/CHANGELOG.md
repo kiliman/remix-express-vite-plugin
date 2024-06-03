@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.2.6
+
+- 🐛 Move minimatch to a dependency [#22]
+
 ## v0.2.5
 
 - ✨ Add `configureServer` option in `expressDevServer` plugin [#6]
