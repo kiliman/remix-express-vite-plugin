@@ -1,9 +1,17 @@
 # CHANGELOG
 
+## v0.3.11
+
+- 🐛 Modify request.url with originalUrl [#23]
+- 🐛 Prevent duplicate calls to createExpressApp but still support HMR [#24]
+- 🐛 Use `x-forwarded-host` for resolved hostname
+
 ## v0.3.10
+
 - ~~🐛 Move minimatch to a dependency [#22]~~
 
 ## v0.3.9
+
 - 🐛 Move minimatch to a dependency [#22]
 
 ## v0.3.8
