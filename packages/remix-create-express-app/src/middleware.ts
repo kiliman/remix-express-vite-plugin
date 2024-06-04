@@ -66,6 +66,7 @@ export function createMiddlewareRequestHandler({
           'http://localhost',
         )
         req.originalUrl = url.pathname + url.search
+        req.url = req.originalUrl
       }
       // separate request for middleware functions
       const middlewareRequest = createMiddlewareRequest(req, res)
