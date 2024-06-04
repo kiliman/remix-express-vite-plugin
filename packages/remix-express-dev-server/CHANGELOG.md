@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.2.7
+
+- 🐛 Use the moduleGraph to load the server entry point so that we don't call and transform the remix entry server twice [#25]
+
 ## v0.2.6
 
 - 🐛 Move minimatch to a dependency [#22]
