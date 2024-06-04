@@ -66,16 +66,22 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
             }
           }
 
-          let build
+          let module
 
           try {
-            build = await server.ssrLoadModule(entry)
+            module = await server.moduleGraph.getModuleByUrl(entry);
           } catch (e) {
             return next(e)
           }
 
+          const entryModule = module?.ssrModule?.entry.module;
+
+          if (entryModule === undefined) {
+            return next();
+          }
+
           // explicitly typed since express handle function is not exported
-          const app = build.entry.module[exportName] as {
+          const app = entryModule[exportName] as {
             handle: (
               req: http.IncomingMessage,
               res: http.ServerResponse,
