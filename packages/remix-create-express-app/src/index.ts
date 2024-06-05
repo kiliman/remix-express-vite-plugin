@@ -36,9 +36,6 @@ export type CreateExpressAppArgs = {
   serverBuildFile?: string
 }
 
-let app: express.Application;
-let initialized = false;
-
 export function createExpressApp({
   configure,
   getLoadContext,
@@ -49,12 +46,6 @@ export function createExpressApp({
   buildDirectory = 'build',
   serverBuildFile = 'index.js',
 }: CreateExpressAppArgs = {}) {
-
-  if (initialized) {
-    initialized = false // reset initialized for HMR
-    return app;
-  }
-
   sourceMapSupport.install({
     retrieveSourceMap: function (source) {
       const match = source.startsWith('file://')
@@ -77,9 +68,7 @@ export function createExpressApp({
 
   const isProductionMode = mode === 'production'
 
-  app = getExpress?.() ?? express()
-  // prevent multiple initialization
-  initialized = true
+  const app = getExpress?.() ?? express()
 
   // Vite fingerprints its assets so we can cache forever.
   app.use(
