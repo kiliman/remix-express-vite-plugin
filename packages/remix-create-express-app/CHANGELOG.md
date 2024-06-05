@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.3.12
+
+- ↩️ Revert "Prevent duplicate calls to createExpressApp but still support HMR [#24]"
+
 ## v0.3.11
 
 - 🐛 Modify request.url with originalUrl [#23]
