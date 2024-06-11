@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.4.2
+
+- 🐛 Fix import reference
+
 ## v0.4.1
 
 - 🐛 Ensure Vite plugin uses specified getLoadContext for SSR+HMR
