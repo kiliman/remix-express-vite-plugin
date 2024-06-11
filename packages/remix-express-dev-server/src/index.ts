@@ -39,6 +39,7 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
 
   const plugin: VitePlugin = {
     name: 'remix-express-dev-server',
+    enforce: 'post',
     configureServer: async server => {
       async function createMiddleware(
         server: ViteDevServer,
