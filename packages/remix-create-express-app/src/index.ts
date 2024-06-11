@@ -6,6 +6,7 @@ import {
   createRequestHandler as createExpressRequestHandler,
   GetLoadContextFunction as ExpressGetLoadContextFunction,
 } from './remix.js'
+import { setRemixDevLoadContext } from '@remix-run/dev/dist/vite/plugin'
 import { AppLoadContext, type ServerBuild } from '@remix-run/node'
 import express, { type Application } from 'express'
 import sourceMapSupport from 'source-map-support'
@@ -71,6 +72,21 @@ export async function createExpressApp({
 
   const isProductionMode = mode === 'production'
 
+  if (process.env.NODE_ENV === 'development') {
+    // HACK to setup the context for Vite HMR for SSR
+    setRemixDevLoadContext(async () => {
+      // @ts-ignore
+      let req = createDummyRequest('/')
+      let res = createDummyResponse()
+      let build = {} as ServerBuild
+      let context = getLoadContext?.(req, res, { build }) ?? {}
+      if (context instanceof Promise) {
+        context = await context
+      }
+      return context
+    })
+  }
+
   let app = getExpress?.() ?? express()
   if (app instanceof Promise) {
     app = await app
@@ -126,7 +142,11 @@ export async function createExpressApp({
 
       const expressGetLoadContextFunction: ExpressGetLoadContextFunction =
         async (req, res) => {
-          return getLoadContext?.(req, res, { build }) ?? {}
+          let context = getLoadContext?.(req, res, { build }) ?? {}
+          if (context instanceof Promise) {
+            context = await context
+          }
+          return context
         }
 
       return createRequestHandler({
@@ -201,4 +221,28 @@ function importDevBuild() {
       setRoutes(build as ServerBuild)
       return build as ServerBuild
     }) as Promise<ServerBuild>
+}
+
+// Function to create a dummy express Request object
+function createDummyRequest(
+  url: string,
+  body: any = {},
+  params: Record<string, string> = {},
+  query: Record<string, string> = {},
+  headers: Record<string, string> = {},
+) {
+  return {
+    url,
+    originalUrl: url,
+    body,
+    params,
+    query,
+    headers,
+    get: (header: string) => headers[header],
+  } as express.Request
+}
+
+// Function to create a dummy express Response object
+function createDummyResponse() {
+  return {} as express.Response
 }
