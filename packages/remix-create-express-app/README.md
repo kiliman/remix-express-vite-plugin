@@ -1,6 +1,9 @@
 # remix-create-express-app
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
@@ -50,7 +53,7 @@ below.
 ```ts
 export type CreateExpressAppArgs = {
   // configure the app to add additional express middleware
-  configure?: (app: Application) => void
+  configure?: async (app: Application) => void
 
   // get the remix AppLoadContext
   getLoadContext?: GetLoadContextFunction
@@ -63,17 +66,17 @@ export type CreateExpressAppArgs = {
 
   // by default, it will use a standard express object, but you can override
   // it for example to return one that handles http2
-  getExpress?: () => Application
+  getExpress?: async () => Application
 
   // this function can be used to create an https or http2 server
-  createServer?: (app: Application) => Server
+  createServer?: async (app: Application) => Server
 
   // set to true to use unstable middleware
   unstable_middleware?: boolean
 
   // remix build directory as defined in vite.config https://remix.run/docs/en/main/file-conventions/vite-config#builddirectory
   buildDirectory?: string
-  
+
   // sever build file as defined in vite.config https://remix.run/docs/en/main/file-conventions/vite-config#serverbuildfile
   serverBuildFile?: string
 }
@@ -81,7 +84,8 @@ export type CreateExpressAppArgs = {
 
 You can add additional Express middleware with the `configure` function. If you
 do not provide a function, it will create a default Express app similar to the
-Remix App Server.
+Remix App Server. The `configure` function can be async. If so, make sure to
+`await createExpressApp()`.
 
 If you want to set up the Remix `AppLoadContext`, pass in a function to `getLoadContext`.
 Modify the `AppLoadContext` interface used in your app.
@@ -486,6 +490,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

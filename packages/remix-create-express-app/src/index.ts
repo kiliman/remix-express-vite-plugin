@@ -14,29 +14,32 @@ import { setRoutes } from './routes.js'
 import compression from 'compression'
 import morgan from 'morgan'
 
-type CreateRequestHandlerFunction = typeof createExpressRequestHandler
-type GetLoadContextFunction = (
+export type CreateRequestHandlerFunction = typeof createExpressRequestHandler
+export type GetLoadContextFunction = (
   req: express.Request,
   res: express.Response,
   args: {
     build: ServerBuild
   },
 ) => Promise<AppLoadContext> | AppLoadContext
+export type ConfigureFunction = (app: Application) => Promise<void> | void
+export type CreateServerFunction = (app: Application) => Server
+export type GetExpressFunction = () => Application
 
 export type CreateExpressAppArgs = {
-  configure?: (app: Application) => void
+  configure?: ConfigureFunction
   getLoadContext?: GetLoadContextFunction
   customRequestHandler?: (
     defaultCreateRequestHandler: CreateRequestHandlerFunction,
   ) => CreateRequestHandlerFunction
-  getExpress?: () => Application
-  createServer?: (app: Application) => Server
+  getExpress?: GetExpressFunction
+  createServer?: CreateServerFunction
   unstable_middleware?: boolean
   buildDirectory?: string
   serverBuildFile?: string
 }
 
-export function createExpressApp({
+export async function createExpressApp({
   configure,
   getLoadContext,
   customRequestHandler,
@@ -45,7 +48,7 @@ export function createExpressApp({
   unstable_middleware,
   buildDirectory = 'build',
   serverBuildFile = 'index.js',
-}: CreateExpressAppArgs = {}) {
+}: CreateExpressAppArgs = {}): Promise<Application> {
   sourceMapSupport.install({
     retrieveSourceMap: function (source) {
       const match = source.startsWith('file://')
@@ -68,12 +71,18 @@ export function createExpressApp({
 
   const isProductionMode = mode === 'production'
 
-  const app = getExpress?.() ?? express()
+  let app = getExpress?.() ?? express()
+  if (app instanceof Promise) {
+    app = await app
+  }
 
   // Vite fingerprints its assets so we can cache forever.
   app.use(
     '/assets',
-    express.static(`${buildDirectory}/client/assets`, { immutable: true, maxAge: '1y' }),
+    express.static(`${buildDirectory}/client/assets`, {
+      immutable: true,
+      maxAge: '1y',
+    }),
   )
 
   // Everything else (like favicon.ico) is cached for an hour. You may want to be
@@ -86,7 +95,7 @@ export function createExpressApp({
 
   if (configure) {
     // call custom configure function if provided
-    configure(app)
+    await configure(app)
   } else {
     // otherwise setup default middleware similar to remix app server
     app.disable('x-powered-by')
@@ -133,7 +142,10 @@ export function createExpressApp({
 
   if (isProductionMode) {
     // create a custom server if createServer function is provided
-    const server = createServer?.(app) ?? app
+    let server = createServer?.(app) ?? app
+    if (server instanceof Promise) {
+      server = await server
+    }
     // check if server is an https/http2 server
     const isSecureServer = !!('cert' in server && server.cert)
 
@@ -160,12 +172,20 @@ const viteDevServer =
         }),
       )
 
-function importProductionBuild(buildDirectory: string, serverBuildFile: string) {
+function importProductionBuild(
+  buildDirectory: string,
+  serverBuildFile: string,
+) {
   return import(
     /*@vite-ignore*/
     url
       .pathToFileURL(
-        path.resolve(path.join(process.cwd(), `/${buildDirectory}/server/${serverBuildFile}`)),
+        path.resolve(
+          path.join(
+            process.cwd(),
+            `/${buildDirectory}/server/${serverBuildFile}`,
+          ),
+        ),
       )
       .toString()
   ).then(build => {
