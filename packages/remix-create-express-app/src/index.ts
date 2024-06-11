@@ -6,7 +6,7 @@ import {
   createRequestHandler as createExpressRequestHandler,
   GetLoadContextFunction as ExpressGetLoadContextFunction,
 } from './remix.js'
-import { setRemixDevLoadContext } from '@remix-run/dev/dist/vite/plugin'
+import { setRemixDevLoadContext } from '@remix-run/dev/dist/vite/plugin.js'
 import { AppLoadContext, type ServerBuild } from '@remix-run/node'
 import express, { type Application } from 'express'
 import sourceMapSupport from 'source-map-support'
