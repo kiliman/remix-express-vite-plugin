@@ -18,6 +18,13 @@ export const defaultOptions: Required<DevServerOptions> = {
 }
 
 export type Fetch = (request: Request) => Promise<Response>
+export type AppHandle = {
+  handle: (
+    req: http.IncomingMessage,
+    res: http.ServerResponse,
+    next: Connect.NextFunction,
+  ) => void
+}
 
 export function expressDevServer(options?: DevServerOptions): VitePlugin {
   const entry = options?.entry ?? defaultOptions.entry
@@ -69,15 +76,15 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
           let module
 
           try {
-            module = await server.moduleGraph.getModuleByUrl(entry);
+            module = await server.moduleGraph.getModuleByUrl(entry)
           } catch (e) {
             return next(e)
           }
 
-          const entryModule = module?.ssrModule?.entry.module;
+          const entryModule = module?.ssrModule?.entry?.module
 
           if (entryModule === undefined) {
-            return next();
+            return next()
           }
 
           // explicitly typed since express handle function is not exported
