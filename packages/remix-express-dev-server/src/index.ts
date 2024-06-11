@@ -88,20 +88,16 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
           }
 
           // explicitly typed since express handle function is not exported
-          const app = entryModule[exportName] as {
-            handle: (
-              req: http.IncomingMessage,
-              res: http.ServerResponse,
-              next: Connect.NextFunction,
-            ) => void
-          }
-
+          let app = entryModule[exportName] as AppHandle | Promise<AppHandle>
           if (!app) {
             return next(
               new Error(
                 `Failed to find a named export "${exportName}" from ${entry}`,
               ),
             )
+          }
+          if (app instanceof Promise) {
+            app = await app
           }
           // pass request to the Express app
           app.handle(req, res, next)
