@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.4.0
+
+- 🐛 Ensure module is ready before accessing [#27]
+- ✨ Add support for app Promise
+- 🔨 Ensure plugin runs at end via `enforce: post`
+
 ## v0.2.7
 
 - 🐛 Use the moduleGraph to load the server entry point so that we don't call and transform the remix entry server twice [#25]

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.4.0
+
+- ✨ `createExpressApp` now supports `async` for configuration
+
 ## v0.3.12
 
 - ↩️ Revert "Prevent duplicate calls to createExpressApp but still support HMR [#24]"
