@@ -6,7 +6,6 @@ import {
   createRequestHandler as createExpressRequestHandler,
   GetLoadContextFunction as ExpressGetLoadContextFunction,
 } from './remix.js'
-import { setRemixDevLoadContext } from '@remix-run/dev/dist/vite/plugin.js'
 import { AppLoadContext, type ServerBuild } from '@remix-run/node'
 import express, { type Application } from 'express'
 import sourceMapSupport from 'source-map-support'
@@ -74,6 +73,11 @@ export async function createExpressApp({
 
   if (process.env.NODE_ENV === 'development') {
     // HACK to setup the context for Vite HMR for SSR
+    const { setRemixDevLoadContext } = await import(
+      // @ts-ignore
+      '@remix-run/dev/dist/vite/plugin.js'
+    )
+
     setRemixDevLoadContext(async () => {
       // @ts-ignore
       let req = createDummyRequest('/')
