@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.4.3
+
+- 🐛 Dynamically import setRemixDevLoadContext in development only
+
 ## v0.4.2
 
 - 🐛 Fix import reference
