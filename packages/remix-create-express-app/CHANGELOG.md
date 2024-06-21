@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.4.4
+
+- 🔥 Remove context hack
+
 ## v0.4.3
 
 - 🐛 Dynamically import setRemixDevLoadContext in development only

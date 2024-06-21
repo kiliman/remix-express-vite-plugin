@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.4.4
+
+- 🐛 Ensure remix SSR module is loaded
+
 ## v0.4.0
 
 - 🐛 Ensure module is ready before accessing [#27]
