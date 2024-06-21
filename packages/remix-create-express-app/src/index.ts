@@ -71,26 +71,6 @@ export async function createExpressApp({
 
   const isProductionMode = mode === 'production'
 
-  if (process.env.NODE_ENV === 'development') {
-    // HACK to setup the context for Vite HMR for SSR
-    const { setRemixDevLoadContext } = await import(
-      // @ts-ignore
-      '@remix-run/dev/dist/vite/plugin.js'
-    )
-
-    setRemixDevLoadContext(async () => {
-      // @ts-ignore
-      let req = createDummyRequest('/')
-      let res = createDummyResponse()
-      let build = {} as ServerBuild
-      let context = getLoadContext?.(req, res, { build }) ?? {}
-      if (context instanceof Promise) {
-        context = await context
-      }
-      return context
-    })
-  }
-
   let app = getExpress?.() ?? express()
   if (app instanceof Promise) {
     app = await app
