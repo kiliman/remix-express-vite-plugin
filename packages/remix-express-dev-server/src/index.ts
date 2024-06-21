@@ -47,7 +47,7 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
         // allow for additional configuration of vite dev server
         configureServer(server.httpServer as http.Server)
 
-        return async function (
+        return async function ExpressDevServerMiddleware(
           req: http.IncomingMessage,
           res: http.ServerResponse,
           next: Connect.NextFunction,
@@ -74,15 +74,21 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
             }
           }
 
-          let module
+          let ssrModule
 
           try {
-            module = await server.moduleGraph.getModuleByUrl(entry)
+            let module = await server.moduleGraph.getModuleByUrl(entry)
+            if (module) {
+              ssrModule = module.ssrModule
+            }
           } catch (e) {
             return next(e)
           }
+          if (!ssrModule) {
+            ssrModule = await server.ssrLoadModule(entry)
+          }
 
-          const entryModule = module?.ssrModule?.entry?.module
+          const entryModule = ssrModule?.entry?.module
 
           if (entryModule === undefined) {
             return next()
