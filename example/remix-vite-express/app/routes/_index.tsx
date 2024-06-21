@@ -20,7 +20,9 @@ export default function Index() {
   return (
     <div style={{ fontFamily: 'system-ui, sans-serif', lineHeight: '1.8' }}>
       <h1>Welcome to Remix</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && (
+        <p style={{ color: 'red' }}>{JSON.stringify(error, null, 2)}</p>
+      )}
       <ul>
         <li>
           <Link to="/test">Test</Link>
