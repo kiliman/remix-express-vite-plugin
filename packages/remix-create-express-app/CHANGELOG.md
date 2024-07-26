@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.4.5
+
+- 🐛 Move `configure` call before default middleware
+
 ## v0.4.4
 
 - 🔥 Remove context hack
