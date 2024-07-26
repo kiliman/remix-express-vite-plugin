@@ -76,6 +76,16 @@ export async function createExpressApp({
     app = await app
   }
 
+  if (configure) {
+    // call custom configure function if provided
+    await configure(app)
+  } else {
+    // otherwise setup default middleware similar to remix app server
+    app.disable('x-powered-by')
+    app.use(compression())
+    app.use(morgan('tiny'))
+  }
+
   // Vite fingerprints its assets so we can cache forever.
   app.use(
     '/assets',
@@ -92,16 +102,6 @@ export async function createExpressApp({
       maxAge: '1h',
     }),
   )
-
-  if (configure) {
-    // call custom configure function if provided
-    await configure(app)
-  } else {
-    // otherwise setup default middleware similar to remix app server
-    app.disable('x-powered-by')
-    app.use(compression())
-    app.use(morgan('tiny'))
-  }
 
   const defaultCreateRequestHandler = unstable_middleware
     ? createMiddlewareRequestHandler
