@@ -58,8 +58,8 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
         ): Promise<void> {
           // exclude requests that should be handled by Vite dev server
           const exclude = [
-            new RegExp(`^${basePattern}\/@.+$`),
-            new RegExp(`^${basePattern}\/node_modules\\/.*`)
+            new RegExp(`^${basePattern}/@.+$`),
+            new RegExp(`^${basePattern}/node_modules/.*`)
           ]
 
           for (const pattern of exclude) {
