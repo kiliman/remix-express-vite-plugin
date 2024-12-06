@@ -79,6 +79,10 @@ export type CreateExpressAppArgs = {
 
   // sever build file as defined in vite.config https://remix.run/docs/en/main/file-conventions/vite-config#serverbuildfile
   serverBuildFile?: string
+
+  // base as defined in vite.config https://vite.dev/config/shared-options.html#base, but without a trailing slash (/).
+  // Let it empty if you use the default base
+  basePath?: string
 }
 ```
 
