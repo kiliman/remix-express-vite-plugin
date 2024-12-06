@@ -7,6 +7,7 @@ export type DevServerOptions = {
   entry?: string
   exportName?: string
   appDirectory?: string
+  base?: string
   configureServer?: (server: http.Server) => void
 }
 
@@ -14,6 +15,7 @@ export const defaultOptions: Required<DevServerOptions> = {
   entry: 'virtual:remix/server-build',
   exportName: 'app',
   appDirectory: './app',
+  base: "",
   configureServer: () => {},
 }
 
@@ -31,11 +33,13 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
   const exportName = options?.exportName ?? defaultOptions.exportName
   const configureServer =
     options?.configureServer ?? defaultOptions.configureServer
-  let appDirectory = normalizeAppDirectory(
+  const appDirectory = normalizeAppDirectory(
     options?.appDirectory ?? defaultOptions.appDirectory,
   )
+  const base = options?.base ?? defaultOptions.base
 
-  const appDirectoryPattern = new RegExp(`^${escapeRegExp(appDirectory)}`)
+  const basePattern = escapeRegExp(base);
+  const appDirectoryPattern = new RegExp(`^${basePattern}${escapeRegExp(appDirectory)}`)
 
   const plugin: VitePlugin = {
     name: 'remix-express-dev-server',
@@ -53,7 +57,10 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
           next: Connect.NextFunction,
         ): Promise<void> {
           // exclude requests that should be handled by Vite dev server
-          const exclude = [/^\/@.+$/, /^\/node_modules\/.*/]
+          const exclude = [
+            new RegExp(`^${basePattern}/@.+$`),
+            new RegExp(`^${basePattern}/node_modules/.*`)
+          ]
 
           for (const pattern of exclude) {
             if (req.url) {
@@ -69,7 +76,7 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
           // check if url is a physical file in the app directory
           if (appDirectoryPattern.test(req.url!)) {
             const url = new URL(req.url!, 'http://localhost')
-            if (fs.existsSync(url.pathname.slice(1))) {
+            if (fs.existsSync(url.pathname.replace(base, "").slice(1))) {
               return next()
             }
           }
