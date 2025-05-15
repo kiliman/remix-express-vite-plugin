@@ -7,6 +7,7 @@ export type DevServerOptions = {
   entry?: string
   exportName?: string
   appDirectory?: string
+  vitePaths?: RegExp[]
   configureServer?: (server: http.Server) => void
 }
 
@@ -14,6 +15,7 @@ export const defaultOptions: Required<DevServerOptions> = {
   entry: 'virtual:remix/server-build',
   exportName: 'app',
   appDirectory: './app',
+  vitePaths: [],
   configureServer: () => {},
 }
 
@@ -53,7 +55,7 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
           next: Connect.NextFunction,
         ): Promise<void> {
           // exclude requests that should be handled by Vite dev server
-          const exclude = [/^\/@.+$/, /^\/node_modules\/.*/]
+          const exclude = [/^\/@.+$/, /^\/node_modules\/.*/, ...(options?.vitePaths ?? [])]
 
           for (const pattern of exclude) {
             if (req.url) {

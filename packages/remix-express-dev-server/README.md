@@ -44,6 +44,7 @@ export type DevServerOptions = {
   entry?: string // Express app entry: default = 'virtual:remix/server-build'
   entryName?: string // name of express app export: default = app
   appDirectory?: string // path to remix app directory: default = ./app
+  vitePaths?: RegExp[] // array of path patterns to send to vite server: defeault = []
   configureServer?: (server: http.Server) => void // allow additional configuration
   // of Vite dev server (like setting up socket.io)
 }
