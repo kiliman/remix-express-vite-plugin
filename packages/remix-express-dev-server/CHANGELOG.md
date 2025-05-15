@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v0.4.6
+
+- ✨ Add `vitePaths` option in `expressDevServer` plugin
+
+## v0.4.5
+
+- 🐛 Move `configure` call before default middleware
+
 ## v0.4.4
 
 - 🐛 Ensure remix SSR module is loaded
