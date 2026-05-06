@@ -2,7 +2,7 @@
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "esModuleInterop": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "target": "ES2022",
     "module": "ES2022",
     "strict": true,
@@ -10,7 +10,8 @@
     "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "declaration": true,
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "rootDir": "./src"
   },
   "exclude": ["node_modules"],
   "include": ["src/**/*.ts", "types/**/*.d.ts"]

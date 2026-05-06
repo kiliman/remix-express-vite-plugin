@@ -165,16 +165,38 @@ export async function createExpressApp({
   return app
 }
 
-// This server is only used to load the dev server build
+// Cross-package rendezvous key. `remix-express-dev-server`'s `configureServer`
+// hook stashes the outer Vite dev server here before entry.server.tsx ever
+// evaluates. Reusing it is what keeps SSR module state to a single instance —
+// without the rendezvous, this file would create a parallel Vite dev server
+// with its own SSR runtime, causing entry.server.tsx (and everything it
+// imports) to evaluate twice with separate module-level state. That breaks
+// any library that patches globals once at module init (MSW, Sentry, OTel).
+//
+// Must match the literal in `remix-express-dev-server/src/index.ts`.
+const VITE_DEV_SERVER_GLOBAL_KEY = Symbol.for(
+  'remix-create-express-app:vite-dev-server',
+)
+
+// This server is only used to load the dev server build. Prefer the outer
+// dev server stashed by `remix-express-dev-server` (the common case); fall
+// back to creating a fresh middlewareMode server for standalone usage.
+const sharedViteDevServer = (globalThis as Record<symbol, unknown>)[
+  VITE_DEV_SERVER_GLOBAL_KEY
+] as Awaited<ReturnType<typeof createDevServer>> | undefined
+
 const viteDevServer =
   process.env.NODE_ENV === 'production'
     ? undefined
-    : await import('vite').then(vite =>
-        vite.createServer({
-          server: { middlewareMode: true },
-          appType: 'custom',
-        }),
-      )
+    : (sharedViteDevServer ?? (await createDevServer()))
+
+async function createDevServer() {
+  const vite = await import('vite')
+  return vite.createServer({
+    server: { middlewareMode: true },
+    appType: 'custom',
+  })
+}
 
 function importProductionBuild(
   buildDirectory: string,

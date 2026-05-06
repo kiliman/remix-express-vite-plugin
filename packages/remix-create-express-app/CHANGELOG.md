@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v0.4.7
+
+- 🐛 Reuse the outer Vite dev server (stashed by `remix-express-dev-server` on
+  `globalThis`) instead of always creating a new one. Eliminates a parallel
+  SSR runtime that caused `entry.server.tsx` (and its transitive imports) to
+  evaluate twice with separate module-level state, silently breaking any
+  library that patches globals at module init (MSW, Sentry HTTP
+  instrumentation, OTel). Standalone usage (without `remix-express-dev-server`)
+  still falls back to creating its own dev server, so this is non-breaking.
+
 ## v0.4.5
 
 - 🐛 Move `configure` call before default middleware

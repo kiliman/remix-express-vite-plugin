@@ -28,6 +28,20 @@ export type AppHandle = {
   ) => void
 }
 
+/**
+ * Cross-package rendezvous key. `remix-create-express-app` reads this at
+ * module-load time to reuse the outer Vite dev server instead of spinning up
+ * its own. Without the rendezvous, entry.server.tsx evaluates twice in
+ * separate SSR runtimes — every module-level `const` (including any
+ * globalThis patch from MSW, Sentry's HTTP instrumentation, etc.) ends up
+ * with two distinct copies, and the second copy silently shadows the first.
+ *
+ * Must match the literal in `remix-create-express-app/src/index.ts`.
+ */
+export const VITE_DEV_SERVER_GLOBAL_KEY = Symbol.for(
+  'remix-create-express-app:vite-dev-server',
+)
+
 export function expressDevServer(options?: DevServerOptions): VitePlugin {
   const entry = options?.entry ?? defaultOptions.entry
   const exportName = options?.exportName ?? defaultOptions.exportName
@@ -43,6 +57,16 @@ export function expressDevServer(options?: DevServerOptions): VitePlugin {
     name: 'remix-express-dev-server',
     enforce: 'post',
     configureServer: async server => {
+      // Stash the outer dev server BEFORE anything else can evaluate the
+      // entry server module. `remix-create-express-app`'s top-level code
+      // reads from this slot the first time it loads (which happens during
+      // the first `ssrLoadModule(virtual:remix/server-build)` call). Last
+      // write wins: the Remix child compiler also fires this hook, but its
+      // configureServer runs INSIDE the outer dev server's `configResolved`,
+      // so the outer's hook always lands last and stays.
+      ;(globalThis as Record<symbol, unknown>)[VITE_DEV_SERVER_GLOBAL_KEY] =
+        server
+
       async function createMiddleware(
         server: ViteDevServer,
       ): Promise<Connect.HandleFunction> {
